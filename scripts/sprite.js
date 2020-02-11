@@ -1,9 +1,19 @@
+let Application = PIXI.Application,
+    Container = PIXI.Container,
+    loader = PIXI.loader,
+    resources = PIXI.loader.resources,
+    TextureCache = PIXI.utils.TextureCache,
+    Sprite = PIXI.Sprite,
+    Rectangle = PIXI.Rectangle;
+
 var Kultie = Kultie || {};
 
 Kultie.Entity = class extends PIXI.Sprite{
-    constructor(texture, prefix){
-        super(texture);
+    constructor(source, prefix){
+        super();
+        loader.add(source).load(this.spriteReady.bind(this));
         this._prefix = prefix;
+        this._isReady = false;
         this._animData = {
             "idle": [ 0, 1, 2, 3 ],
             "walk": [ 4, 5, 6, 7, 8, 9, 10, 11 ],
@@ -18,8 +28,10 @@ Kultie.Entity = class extends PIXI.Sprite{
     }
 
     update(){
-        this._animation.update();
-        this.setTexture(this.getSprite());
+        if(this._isReady){
+            this._animation.update();
+            this.setTexture(this.getSprite());
+        }        
     }
 
     getSprite(){
@@ -37,6 +49,14 @@ Kultie.Entity = class extends PIXI.Sprite{
         if(resetIndex){
             this._animation.resetIndex();
         }
+    }
+
+    spriteReady(){
+        this._isReady = true;
+    }
+
+    isReady(){
+        return this._isReady;
     }
 }
 
